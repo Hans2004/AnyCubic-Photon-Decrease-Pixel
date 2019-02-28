@@ -69,8 +69,8 @@ void getPreview( int previewAddr, previewType *preview, FILE* fp ) {
     fread(&preview->imageAddress, sizeof(preview->imageAddress),1,fp);
     fread(&preview->dataLength, sizeof(preview->dataLength),1,fp);
     fread(&preview->padding, sizeof(preview->padding),1,fp);
-    preview->imageData = static_cast<char*>(malloc(static_cast<ulong>(preview->dataLength)));
-    fread(preview->imageData, static_cast<ulong>(preview->dataLength), 1, fp);
+    preview->imageData = static_cast<char*>(malloc(static_cast<unsigned long>(preview->dataLength)));
+    fread(preview->imageData, static_cast<unsigned long>(preview->dataLength), 1, fp);
 }
 
 void writePreview( previewType *preview, FILE* fp) {
@@ -93,7 +93,7 @@ void getLayerDefs( int layerDefsAddr, int nrLayersString, vector<layerDefType> *
 }
 
 void writeLayerDefs( int nrLayersString, vector<layerDefType> *layerDefs, FILE *fp ) {
-    for (unsigned long i=0; i<static_cast<ulong>(nrLayersString); i++) {
+    for (unsigned long i=0; i<static_cast<unsigned long>(nrLayersString); i++) {
         fwrite( &layerDefs->at(i), sizeof(layerDefType), 1, fp);
     }
 }
@@ -102,7 +102,7 @@ void getImages( vector <vector <unsigned char> > *rawData, vector<layerDefType> 
     unsigned char eol;
     for (vector<layerDefType>::size_type i=0; i<static_cast<vector<layerDefType>::size_type>(nLayers); i++) {
         fseek(fp, layerDefs->at(i).imageAddress, SEEK_SET);
-        vector<unsigned char> temp(static_cast<ulong>(layerDefs->at(i).dataLength),0); // This creates a new empty vector with size datalength
+        vector<unsigned char> temp(static_cast<unsigned long>(layerDefs->at(i).dataLength),0); // This creates a new empty vector with size datalength
         fread(&temp.at(0),static_cast<vector<layerDefType>::size_type>(layerDefs->at(i).dataLength),1,fp);
         rawData->push_back(temp);
         fread(&eol, 1, 1, fp);
@@ -110,7 +110,7 @@ void getImages( vector <vector <unsigned char> > *rawData, vector<layerDefType> 
 }
 
 void writeImages(vector <vector <unsigned char> > *rawData, int nLayers,FILE *fp) {
-    for (ulong i=0; i<static_cast<ulong>(nLayers); i++) {
+    for (unsigned long i=0; i<static_cast<unsigned long>(nLayers); i++) {
         fwrite(&rawData->at(i)[0], rawData->at(i).size(), 1, fp);
     }
 }
@@ -236,7 +236,7 @@ int main(int argc, char* argv[]) {
 
     string inFile=argv[1];
     string outFile=argv[2];
-    FILE *fp=fopen(inFile.c_str(), "r");
+    FILE *fp=fopen(inFile.c_str(), "rb");
     if (fp==nullptr) {
         cout << endl << "Error! File: " << inFile << " does not exist!" << endl;
         return(EXIT_FAILURE);
@@ -259,7 +259,7 @@ int main(int argc, char* argv[]) {
     cout << endl;
 
     int nextAddr=layerDefs[0].imageAddress;
-    for (ulong i=0; i<static_cast<ulong>(header.nrLayers); i++) {
+    for (unsigned long i=0; i<static_cast<unsigned long>(header.nrLayers); i++) {
         //cout << "Converting layer: " << i << endl;
         printProgress(static_cast<double>(i*1.0/header.nrLayers));
         layerDefs[i].imageAddress=nextAddr;
@@ -297,7 +297,7 @@ int main(int argc, char* argv[]) {
         nextFp+=rawData.at(i).size();
     }
 
-    FILE *wp=fopen(outFile.c_str(),"w");
+    FILE *wp=fopen(outFile.c_str(),"wb");
     writeHeader(&header,wp);
     writePreview(&preview1,wp);
     writePreview(&preview2,wp);
