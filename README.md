@@ -11,3 +11,6 @@ The utility does not use any external libraries, thus it can be compiled as foll
 g++ main.cpp -o decreasePixel
 
 Usage: decreasePixel infile.photon outfile.photon
+
+The Linux executable can be downloaded as a single file from the Releases section.
+There is also a zip file that contains the program (with some extra dll's) for Windows.
